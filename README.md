@@ -21,7 +21,7 @@ This API lets you store and retrieve YouTube comments with features like:
 
 ### Prerequisites
 
-- Node.js (v14 or higher)
+- Node.js(Latest used)
 - ScyllaDB or Cassandra database
 - npm or yarn
 
