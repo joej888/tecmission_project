@@ -9,19 +9,13 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
 // Routes
 app.use('/api/comments', commentRoutes);
 
-/* // Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
-}); */
-
-// Start server
+// Listen server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

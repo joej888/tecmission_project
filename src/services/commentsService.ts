@@ -2,7 +2,7 @@ import { connectToDatabase, disconnectFromDatabase, getDatabaseClient } from '..
 import { Comment, CommentRow } from '../models/comments';
 import { v4 as uuidv4 } from 'uuid';
 
-// Helper function to map Cassandra Row to CommentRow
+// Helper function to map Scylla DB Row to CommentRow
 const mapDbRowToCommentRow = (row: any): CommentRow => ({
   id: row.id,
   video_id: row.video_id,
@@ -87,7 +87,7 @@ export const deleteComment = async (commentId: string): Promise<void> => {
   if (!result.rows[0]) {
     throw new Error(`Comment with id ${commentId} not found`);
   }
-    await decreaseReplyCount(result.rows[0].parent_comment_id);
+  await decreaseReplyCount(result.rows[0].parent_comment_id);
   const query = 'DELETE FROM comments WHERE id = ?';
   await client.execute(query, [commentId]);
 };
@@ -113,12 +113,12 @@ export const increaseReplyCount = async (parentCommentId: string): Promise<void>
   }
   let currentCount = result.rows[0].reply_count.toNumber();
 
-  currentCount = currentCount + 1; // Increment reply count
+  currentCount = currentCount + 1; // Increment reply count ++
   // Update with new value
   const updateQuery = 'UPDATE comments SET reply_count = ? WHERE id = ?';
   await client.execute(
     'UPDATE comments SET reply_count = ? WHERE id = ?',
-    [currentCount, parentCommentId], // Use 5 instead of 5n
+    [currentCount, parentCommentId],
     { hints: ['bigint', 'uuid'], prepare: true }
   )
 
@@ -150,7 +150,7 @@ export const decreaseReplyCount = async (parentCommentId: string): Promise<void>
 export const likeIncrement = async (commentId: string): Promise<void> => {
   const client = await connectToDatabase();
 
-  // Read current reply_count
+  // Read current likes
   const selectQuery = 'SELECT likes FROM comments WHERE id = ?';
   const result = await client.execute(selectQuery, [commentId]);
 
@@ -160,10 +160,10 @@ export const likeIncrement = async (commentId: string): Promise<void> => {
   }
   let likesCount = result.rows[0].likes.toNumber();
 
-  likesCount = likesCount + 1; // Decrement reply count --
+  likesCount = likesCount + 1; 
   await client.execute(
     'UPDATE comments SET likes = ? WHERE id = ?',
-    [likesCount, commentId], 
+    [likesCount, commentId],
     { hints: ['bigint', 'uuid'], prepare: true }
   )
 
@@ -172,7 +172,7 @@ export const likeIncrement = async (commentId: string): Promise<void> => {
 export const likeDecrement = async (commentId: string): Promise<void> => {
   const client = await connectToDatabase();
 
-  // Read current reply_count
+  // Read current likes
   const selectQuery = 'SELECT likes FROM comments WHERE id = ?';
   const result = await client.execute(selectQuery, [commentId]);
 
@@ -182,7 +182,7 @@ export const likeDecrement = async (commentId: string): Promise<void> => {
   }
   let likesCount = result.rows[0].likes.toNumber();
   if (likesCount > 0) {
-    likesCount = likesCount - 1; // Decrement reply count --
+    likesCount = likesCount - 1; 
     await client.execute(
       'UPDATE comments SET likes = ? WHERE id = ?',
       [likesCount, commentId],
@@ -194,20 +194,20 @@ export const likeDecrement = async (commentId: string): Promise<void> => {
 export const dislikeIncrement = async (commentId: string): Promise<void> => {
   const client = await connectToDatabase();
 
-  // Read current reply_count
+  // Read current dislike
   const selectQuery = 'SELECT dislikes FROM comments WHERE id = ?';
   const result = await client.execute(selectQuery, [commentId]);
 
-  // Check if comment exists
+  // Check if exists
   if (!result.rows[0]) {
     throw new Error(`Comment with id ${commentId} not found`);
   }
   let dislikesCount = result.rows[0].dislikes.toNumber();
 
-  dislikesCount = dislikesCount + 1; // Decrement reply count --
+  dislikesCount = dislikesCount + 1;
   await client.execute(
     'UPDATE comments SET dislikes = ? WHERE id = ?',
-    [dislikesCount, commentId], 
+    [dislikesCount, commentId],
     { hints: ['bigint', 'uuid'], prepare: true }
   )
 
@@ -226,7 +226,7 @@ export const dislikeDecrement = async (commentId: string): Promise<void> => {
   }
   let dislikesCount = result.rows[0].dislikes.toNumber();
   if (dislikesCount > 0) {
-    dislikesCount = dislikesCount - 1; // Decrement reply count --
+    dislikesCount = dislikesCount - 1;
     await client.execute(
       'UPDATE comments SET dislikes = ? WHERE id = ?',
       [dislikesCount, commentId],

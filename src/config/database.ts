@@ -11,15 +11,14 @@ export interface DatabaseConfig {
   datacenter: string;
 }
 
-// Parse hosts from .env (JSON array string)
-let hosts: string[] = ['127.0.0.1:9042'];
+let hosts: string[] = ['43.204.81.81'];
 try {
   if (process.env.SCYLLA_HOSTS) {
     hosts = JSON.parse(process.env.SCYLLA_HOSTS);
   }
 } catch {
   // fallback to split if not JSON
-  hosts = process.env.SCYLLA_HOSTS?.replace(/[\[\]"]+/g, '').split(',') || ['127.0.0.1:9042'];
+  hosts = process.env.SCYLLA_HOSTS?.replace(/[\[\]"]+/g, '').split(',') || ['43.204.81.81'];
 }
 
 export const databaseConfig: DatabaseConfig = {
@@ -87,7 +86,7 @@ async function createKeyspace(): Promise<void> {
 async function createTables(): Promise<void> {
   if (!client) throw new Error('Database client not initialized');
 
-  // Comments table as per db-schema.cql
+  // Comments table
   const createCommentsTable = `
     CREATE TABLE IF NOT EXISTS ${databaseConfig.keyspace}.comments (
       id UUID PRIMARY KEY,

@@ -67,8 +67,10 @@ This API lets you store and retrieve YouTube comments with features like:
 GET /api/comments/:videoId
 ```
 Get all comments for a video with different options:
+- `?type=nested` - Get all comments & nested comments 
+- `?type=top` -Get all top comments without limit
 - `?type=top&topLevelLimit=10` - Get top 10 comments only
-- `?type=nested&topLevelLimit=5&repliesLimit=3` - Get comments with replies
+- `?type=nested&topLevelLimit=5&repliesLimit=3` - Get comments with replies ** top level max 5 comments and each top comment will have max 3 replies
 - No query params - Get all comments ranked by score
 
 ### Create Comment

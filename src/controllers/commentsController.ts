@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { 
+import {
   likeIncrement,
   likeDecrement,
   dislikeIncrement,
   dislikeDecrement,
-  getCommentsByVideoId, 
-  createComment as createCommentService, 
-  deleteComment as deleteCommentService, 
-  getReplies as getRepliesService 
+  getCommentsByVideoId,
+  createComment as createCommentService,
+  deleteComment as deleteCommentService,
+  getReplies as getRepliesService
 } from '../services/commentsService';
 import { getTopComments, getCommentsWithReplies, rankComments } from '../utils/ranking';
 
@@ -15,7 +15,7 @@ import { getTopComments, getCommentsWithReplies, rankComments } from '../utils/r
 export const getComments = async (req: Request, res: Response): Promise<void> => {
   try {
     const { videoId } = req.params;
-    const { type , topLevelLimit, repliesLimit  } = req.query;
+    const { type, topLevelLimit, repliesLimit } = req.query;
 
     if (!videoId) {
       res.status(400).json({
@@ -26,7 +26,7 @@ export const getComments = async (req: Request, res: Response): Promise<void> =>
     }
 
     const comments = await getCommentsByVideoId(videoId);
-    
+
     let result;
     if (type === 'top') {
       const topLevelComments = comments.filter(c => !c.parentCommentId);
@@ -117,7 +117,7 @@ export const deleteComment = async (req: Request, res: Response): Promise<void> 
 export const getReplies = async (req: Request, res: Response): Promise<void> => {
   try {
     const { id } = req.params;
-    const { limit  } = req.query;
+    const { limit } = req.query;
     const repliesLimit = parseInt(limit as string)
     if (!id) {
       res.status(400).json({
@@ -144,7 +144,8 @@ export const getReplies = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const increaseLike = async (req: Request, res: Response): Promise<void> => {try {
+export const increaseLike = async (req: Request, res: Response): Promise<void> => {
+  try {
     const { id } = req.params;
 
     if (!id) {
@@ -170,7 +171,8 @@ export const increaseLike = async (req: Request, res: Response): Promise<void> =
 
 };
 
-export const decreaseLike = async (req: Request, res: Response): Promise<void> => {try {
+export const decreaseLike = async (req: Request, res: Response): Promise<void> => {
+  try {
     const { id } = req.params;
 
     if (!id) {
@@ -196,7 +198,8 @@ export const decreaseLike = async (req: Request, res: Response): Promise<void> =
 
 };
 
-export const increaseDislike = async (req: Request, res: Response): Promise<void> => {try {
+export const increaseDislike = async (req: Request, res: Response): Promise<void> => {
+  try {
     const { id } = req.params;
 
     if (!id) {
@@ -222,7 +225,8 @@ export const increaseDislike = async (req: Request, res: Response): Promise<void
 
 };
 
-export const decreaseDislike = async (req: Request, res: Response): Promise<void> => {try {
+export const decreaseDislike = async (req: Request, res: Response): Promise<void> => {
+  try {
     const { id } = req.params;
 
     if (!id) {
